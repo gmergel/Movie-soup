@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <title>Movie Visualization</title>
+    <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
+    <script type="text/javascript">
+     
+	var drawTime; //draw function interval
+	var context;
+      
+  $(window).load(function () {
+
+	  var canvas = $("#whiteboard")[0];
+	        if (canvas.getContext){
+	          context = canvas.getContext('2d');
+
+		  var movieset1 = [
+			  {
+			    id: 1,
+			    title: "Toy Story",
+			    avgrating: 5
+			  },
+			  {
+			    id: 2,
+			    title: "Jumanji",
+			    avgrating: 4.5
+			  },
+			  {
+			    id: 3,
+			    title: "Old men",
+			    avgrating: 2.5
+			  }
+		  ]
+		
+		  var movieset2 = [
+			  {
+			    id: 12,
+			    title: "Toy Story",
+			    avgrating: 5
+			  },
+			  {
+			    id: 233,
+			    title: "Jumanji",
+			    avgrating: 4.5
+			  },
+			  {
+			    id: 32,
+			    title: "Old men",
+			    avgrating: 3.5
+			  },
+        {
+          id: 8,
+          title: "Toy Story",
+          avgrating: 2
+        },
+			  {
+			    id: 7,
+			    title: "Jumanji",
+			    avgrating: 1.5
+			  },
+			  {
+			    id: 11,
+			    title: "Old men",
+			    avgrating: 1.5
+			  }
+		  ]
+		  
+		  moviesets.push(movieset1, movieset2);
+		  
+		  //loadMovies()
+		  drawTime = setInterval("draw(moviesets[activeMovieSet])", 20);
+		
+		  $("#btn a").click(function(){
+			  activeMovieSet = this.name;
+			  percentGrowth = 0;
+			  drawTime = setInterval("draw(moviesets[activeMovieSet])",20);
+		  })
+	  }
+  });
+
+	var moviesets = new Array();
+  var movieray = new Array();   
+      
+	var activeMovieSet = 0;
+	
+	var covers = new Array();
+	var percentGrowth = 0;
+	var currentX = 0;
+
+      function draw(movieset) {
+		
+	        context.canvas.width = window.innerWidth;
+	        context.canvas.height = window.innerHeight;
+
+	        context.clearRect(0, 0, window.innerWidth, window.innerHeight); // clear canvas
+
+	        var finished = false;
+
+	        $(movieset).each(function (index) {
+	          //$.each(movieset, function (index, movie) {
+
+	          //var id = movie[0];
+	          //var title = movie[1];
+	          //var avgrating = movie[2];
+
+	          var id = this.id;
+	          var title = this.title;
+	          var avgrating = this.avgrating;
+
+	          var wbase = 80;
+	          var hbase = 120;
+
+	          //shadow
+	          context.shadowOffsetX = 2;
+	          context.shadowOffsetY = 2;
+	          context.shadowBlur = 2;
+	          context.shadowColor = 'rgba(80, 80, 80, 0.5)';
+	          context.fillStyle = 'rgba(80,80,80,0.7)';
+
+	          w = Math.floor(wbase * (avgrating / 2));
+	          h = Math.floor(hbase * (avgrating / 2));
+
+	          if (percentGrowth <= 10)
+	            h = Math.floor(-h / 2 * (Math.cos(Math.PI * percentGrowth / 10) - 1) + 10);
+	          else
+	            finished = true;
+
+	          if (index == 0) currentX = 0;
+
+	          //var spacer = (index > 0) ? Math.floor(wbase * (movieset[index - 1].avgrating / 2.5)) : 0;
+
+	          var xpos = currentX + 120 + index * 30;
+	          currentX += w;
+
+	          var ypos = Math.floor(300 + (2 * hbase - h));
+
+	          //draw shadow
+	          context.fillRect(xpos - 1, ypos - 2, w + 3, h + 4);
+
+	          //draw cover
+	          covers[id] = new Image();
+	          covers[id].src = "./covers2/" + id + ".jpg";
+
+	          context.drawImage(covers[id], xpos, ypos, w, h);
+
+	          if (finished && index >= ($(movieset).length - 1)) clearInterval(drawTime);
+
+	        })
+		      percentGrowth+=2.3;
+            }
+      
+            function loadMovies(){
+	            $.getJSON('./queries/average_100k.json', function(data) {
+		        /*$.each(data, function(key, val) {
+		          console.log(val[1])
+		        });
+		        */
+		        moviesets.push(data);
+		  
+		      });
+		
+	}
+
+    </script>
+	<script type="text/ruby">
+		puts "AA";
+	</script>
+    <style type="text/css">
+	  body{
+		  background-color: #ddd;
+		  overflow:hidden;
+		  margin: 0;
+		  padding: 30px;
+	  }
+	  #tutorial{
+		  
+	  }
+    </style>
+  </head>
+  <body>
+	<div id="btn"><a name="0" href="#">Movie set #1</a> - <a name="1" href="#">Movie set #2</a></div>
+    <canvas id="whiteboard"></canvas>
+  </body>
+</html>
