@@ -65,9 +65,9 @@
 			  }
 		  ]
 		  
-		  moviesets.push(movieset1, movieset2);
+		  //moviesets.push(movieset1, movieset2);
 		  
-		  //loadMovies()
+		  loadMovies()
 		  drawTime = setInterval("draw(moviesets[activeMovieSet])", 20);
 		
 		  $("#btn a").click(function(){
@@ -96,16 +96,16 @@
 
 	        var finished = false;
 
-	        $(movieset).each(function (index) {
-	          //$.each(movieset, function (index, movie) {
+	        //$(movieset).each(function (index) {
+	        $.each(movieset, function (index, movie) {
 
-	          //var id = movie[0];
-	          //var title = movie[1];
-	          //var avgrating = movie[2];
+	          var id = movie[0];
+	          var title = movie[1];
+	          var avgrating = movie[2];
 
-	          var id = this.id;
-	          var title = this.title;
-	          var avgrating = this.avgrating;
+	          //var id = this.id;
+	          //var title = this.title;
+	          //var avgrating = this.avgrating;
 
 	          var wbase = 80;
 	          var hbase = 120;
@@ -150,7 +150,7 @@
             }
       
             function loadMovies(){
-	            $.getJSON('./queries/average_100k.json', function(data) {
+              $.getJSON('http://localhost:4567/queries/average_100k.json', function (data) {
 		        /*$.each(data, function(key, val) {
 		          console.log(val[1])
 		        });
